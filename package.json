@@ -1,0 +1,29 @@
+{
+  "name": "worktree-analyzer",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@types/gradient-string": "^1.1.2",
+    "@types/node": "^16.10.2",
+    "@types/react": "^17.0.27",
+    "@types/yargs": "^17.0.3",
+    "fp-ts": "^2.11.4",
+    "gradient-string": "^1.2.0",
+    "ink": "^3.0.9",
+    "ink-divider": "^3.0.0",
+    "ink-gradient": "^2.0.0",
+    "ink-select-input": "^4.2.0",
+    "ink-spinner": "^4.0.2",
+    "ink-use-stdout-dimensions": "^1.0.5",
+    "io-ts": "^2.2.16",
+    "io-ts-reporters": "^2.0.0",
+    "parser-ts": "^0.6.15",
+    "react": "^17.0.2",
+    "ts-adt": "^2.1.2",
+    "yargs": "^17.2.1"
+  }
+}
