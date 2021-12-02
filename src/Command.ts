@@ -4,6 +4,12 @@ import * as O from 'fp-ts/lib/Option'
 import { Context } from './Context'
 import { Dir } from './files/Dir'
 import { ConsoleEnv } from './cli/ConsoleEnv'
+import { WorktreezDirNotFound } from './commands/utils/findWorktreezDir'
+import { PathNotFound, ReadError } from './files/FS'
+import { BranchDoesNotExist } from './commands/utils/branchExists'
+import { ExecError, ParseListError } from './commands/warp/listWorkspaces'
+import { WarpPromptError } from './commands/WarpCommand'
+import { ChildProcessError } from './files/PS'
 
 export type JumpDir = {
   dir: Dir
@@ -14,8 +20,25 @@ export type Command<K extends string, T extends object> = {
   parseArgs: (
     argv: Record<string, unknown>,
     rawArgs: Array<string | number>
-  ) => RTE.ReaderTaskEither<unknown, never, O.Option<{ _type: K } & T>>
+  ) => RTE.ReaderTaskEither<
+    unknown,
+    WorktreezDirNotFound | ReadError | PathNotFound,
+    O.Option<{ _type: K } & T>
+  >
   executeCommand: (
     context: Context
-  ) => (t: T) => RTE.ReaderTaskEither<ConsoleEnv, never, O.Option<JumpDir>>
+  ) => (
+    t: T
+  ) => RTE.ReaderTaskEither<
+    ConsoleEnv,
+    | BranchDoesNotExist
+    | WorktreezDirNotFound
+    | PathNotFound
+    | ReadError
+    | ParseListError
+    | ExecError
+    | WarpPromptError
+    | ChildProcessError,
+    O.Option<JumpDir>
+  >
 }

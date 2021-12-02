@@ -4,7 +4,7 @@ import * as RA from 'fp-ts/ReadonlyArray'
 import * as RNEA from 'fp-ts/lib/ReadonlyNonEmptyArray'
 import * as NEA from 'fp-ts/NonEmptyArray'
 import * as O from 'fp-ts/Option'
-import { identity, pipe } from 'fp-ts/function'
+import { flow, identity, pipe } from 'fp-ts/function'
 import { render } from 'ink'
 import { makeMatchers } from 'ts-adt/MakeADT'
 import { hideBin } from 'yargs/helpers'
@@ -19,6 +19,7 @@ import * as E from 'fp-ts/Either'
 import { WarpCommand } from './commands/WarpCommand'
 import { ConsoleEnv } from './cli/ConsoleEnv'
 import { StdoutConsoleEnv } from './cli/StdoutConsoleEnv'
+import { tapWith } from './commands/utils/findWorktreezDir'
 
 //  wt list-all
 //    list all projects and their worktrees
@@ -66,7 +67,7 @@ const initializeArgs = () =>
         A.reduce(yargs(hideBin(process.argv)), (y, c) => c.addCommand(y))
       )
         .command('help', 'view this help message')
-        .scriptName('gbt')
+        .scriptName('wt')
       const parsedArgsV = yargParsedArgs.argv
       if (parsedArgsV instanceof Promise) {
         return parsedArgsV
@@ -98,15 +99,50 @@ pipe(
   e =>
     RTE.run(e, StdoutConsoleEnv).then(
       E.fold(
-        match({
-          ArgParseError: err => {
-            console.log('error parsing args')
-          },
-          ConfigParseError: () => {
-            console.log('error parsing config')
-          },
-        }),
+        flow(
+          // tapWith('error: ', err => JSON.stringify(err, null, 2)),
+          match({
+            ArgParseError: err => {
+              console.log('error parsing args')
+            },
+            ConfigParseError: () => {
+              console.log('error parsing config')
+            },
+            WorktreezDirNotFound: dnf => {
+              console.log(
+                'Could not find a .worktreez directory in',
+                dnf.contextDir
+              )
+            },
+            PathNotFound: pnf => {
+              console.log(`path not found: ${pnf.path}`)
+            },
+            ReadError: re => {
+              console.log('read error: ', re.path)
+            },
+            BranchDoesNotExist: bdne => {
+              console.log(`Branch '${bdne.branch}' does not exist.`)
+            },
+            ExecError: ee => {
+              console.log(
+                `Error running: '${ee.command}'\nreason: ${ee.reason}`
+              )
+            },
+            ParseListError: ple => {
+              console.log(`Error parsing worktree list from:\n${ple.source}`)
+            },
+            WarpPromptError: () => {
+              console.log(`unknown error with warp prompt`)
+            },
+            ChildProcessError: cpe => {
+              console.log(`Child process error`, cpe.exception)
+            },
+            //
+            //
+          })
+        ),
         pushDir => {
+          console.log('success?', pushDir)
           // todo finish this
           pipe(
             pushDir,
