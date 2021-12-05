@@ -19,7 +19,7 @@ import * as E from 'fp-ts/Either'
 import { WarpCommand } from './commands/WarpCommand'
 import { ConsoleEnv } from './cli/ConsoleEnv'
 import { StdoutConsoleEnv } from './cli/StdoutConsoleEnv'
-import { tapWith } from './commands/utils/findWorktreezDir'
+import { InitCommand } from './commands/InitCommand'
 
 //  wt list-all
 //    list all projects and their worktrees
@@ -35,7 +35,7 @@ import { tapWith } from './commands/utils/findWorktreezDir'
 
 const homeDir = DirC.decode('~')
 
-const Commands = [ProjectsCommand, WarpCommand]
+const Commands = [ProjectsCommand, WarpCommand, InitCommand]
 
 const handleCommand =
   (
@@ -142,7 +142,7 @@ pipe(
           })
         ),
         pushDir => {
-          console.log('success?', pushDir)
+          //console.log('success?', pushDir)
           // todo finish this
           pipe(
             pushDir,

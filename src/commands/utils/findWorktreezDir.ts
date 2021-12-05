@@ -16,7 +16,7 @@ const worktreezDirNotFound = (contextDir: Dir): WorktreezDirNotFound => ({
   contextDir,
 })
 
-const WorktreezConfigDirName = '.worktreez'
+export const WorktreezConfigDirName = '.worktreez'
 
 export const tap =
   (message: string) =>

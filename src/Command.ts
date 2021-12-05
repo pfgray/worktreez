@@ -15,6 +15,10 @@ export type JumpDir = {
   dir: Dir
 }
 
+/**
+ * @template K represents the command tag
+ * @template T represents the command's parsed arguments
+ */
 export type Command<K extends string, T extends object> = {
   addCommand(y: yargs.Argv<{}>): yargs.Argv<{}>
   parseArgs: (
